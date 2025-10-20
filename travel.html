@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌍 Travel & Hospitality Management</title>
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f5f7fa;
+  }
+  header {
+    background: linear-gradient(45deg, #007bff, #00c6ff);
+    color: white;
+    padding: 40px 0;
+    text-align: center;
+  }
+  .hero-section {
+    background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e') center/cover no-repeat;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-direction: column;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+  }
+  .search-box {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    margin-top: -60px;
+    z-index: 10;
+    position: relative;
+  }
+  .transport-card {
+    border-radius: 15px;
+    transition: all 0.3s;
+  }
+  .transport-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+  #map {
+    height: 500px;
+    border-radius: 15px;
+    margin-top: 30px;
+  }
+  footer {
+    background: #212529;
+    color: white;
+    text-align: center;
+    padding: 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <h1>Travel & Hospitality Management System</h1>
+  <p>Plan, book, and explore your next destination easily 🌏</p>
+</header>
+
+<!-- Hero Section -->
+<div class="hero-section">
+  <h2>Discover Amazing Places Around the World</h2>
+  <p>From Indian cities to global destinations</p>
+</div>
+
+<!-- Search Section -->
+<div class="container search-box mt-4">
+  <h4 class="mb-3">Find Your Perfect Journey</h4>
+  <div class="row g-3">
+    <div class="col-md-4">
+      <select id="start" class="form-select">
+        <option selected disabled>Choose Start City</option>
+        <optgroup label="🇮🇳 Indian Cities">
+          <option>Delhi</option>
+          <option>Mumbai</option>
+          <option>Bangalore</option>
+          <option>Hyderabad</option>
+          <option>Chennai</option>
+          <option>Kolkata</option>
+          <option>Pune</option>
+          <option>Jaipur</option>
+          <option>Goa</option>
+          <option>Ahmedabad</option>
+        </optgroup>
+        <optgroup label="🌍 International Cities">
+          <option>Paris</option>
+          <option>London</option>
+          <option>New York</option>
+          <option>Dubai</option>
+          <option>Singapore</option>
+          <option>Tokyo</option>
+          <option>Bangkok</option>
+          <option>Sydney</option>
+          <option>Toronto</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <select id="destination" class="form-select">
+        <option selected disabled>Choose Destination City</option>
+        <optgroup label="🇮🇳 Indian Cities">
+          <option>Delhi</option>
+          <option>Mumbai</option>
+          <option>Bangalore</option>
+          <option>Hyderabad</option>
+          <option>Chennai</option>
+          <option>Kolkata</option>
+          <option>Pune</option>
+          <option>Jaipur</option>
+          <option>Goa</option>
+          <option>Ahmedabad</option>
+        </optgroup>
+        <optgroup label="🌍 International Cities">
+          <option>Paris</option>
+          <option>London</option>
+          <option>New York</option>
+          <option>Dubai</option>
+          <option>Singapore</option>
+          <option>Tokyo</option>
+          <option>Bangkok</option>
+          <option>Sydney</option>
+          <option>Toronto</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <select id="mode" class="form-select">
+        <option value="flight">✈️ Flight</option>
+        <option value="train">🚆 Train</option>
+        <option value="bus">🚌 Bus</option>
+        <option value="car">🚗 Car</option>
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <button class="btn btn-primary w-100" onclick="planTrip()">Search</button>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Links -->
+<div class="container my-5">
+  <h3 class="text-center mb-4">Popular Booking Websites</h3>
+  <div class="row text-center">
+    <div class="col-md-3 mb-3"><a href="https://www.makemytrip.com/" target="_blank" class="btn btn-outline-primary w-100">MakeMyTrip</a></div>
+    <div class="col-md-3 mb-3"><a href="https://www.booking.com/" target="_blank" class="btn btn-outline-primary w-100">Booking.com</a></div>
+    <div class="col-md-3 mb-3"><a href="https://www.expedia.com/" target="_blank" class="btn btn-outline-primary w-100">Expedia</a></div>
+    <div class="col-md-3 mb-3"><a href="https://www.trivago.in/" target="_blank" class="btn btn-outline-primary w-100">Trivago</a></div>
+  </div>
+</div>
+
+<!-- Modes of Transport -->
+<div class="container my-5">
+  <h3 class="text-center mb-4">Modes of Transportation</h3>
+  <div class="row text-center">
+    <div class="col-md-3"><div class="card transport-card p-3"><h5>✈️ Flights</h5><p>Book domestic and international flights easily.</p></div></div>
+    <div class="col-md-3"><div class="card transport-card p-3"><h5>🚆 Trains</h5><p>Travel across India with IRCTC and metro networks.</p></div></div>
+    <div class="col-md-3"><div class="card transport-card p-3"><h5>🚌 Buses</h5><p>Intercity and local bus travel via redBus or State Transport.</p></div></div>
+    <div class="col-md-3"><div class="card transport-card p-3"><h5>🚗 Car Rentals</h5><p>Hire self-drive or chauffeur cars via ZoomCar or Ola Rentals.</p></div></div>
+  </div>
+</div>
+
+<!-- Map & Nearby -->
+<div class="container">
+  <h3 class="text-center mb-4">Find Nearby Facilities</h3>
+  <div class="row g-3 mb-3">
+    <div class="col-md-6"><input type="text" id="locationInput" class="form-control" placeholder="Enter a city (e.g. Mumbai)"></div>
+    <div class="col-md-4">
+      <select id="category" class="form-select">
+        <option value="hotel">Hotels</option>
+        <option value="restaurant">Restaurants</option>
+        <option value="school">Schools</option>
+        <option value="hospital">Hospitals</option>
+        <option value="park">Parks</option>
+        <option value="atm">ATMs</option>
+        <option value="bank">Banks</option>
+      </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-success w-100" onclick="findNearby()">Find</button></div>
+  </div>
+  <div id="map"></div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <p>&copy; 2025 Travel & Hospitality Management | Designed with ❤️ using Bootstrap</p>
+</footer>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+const map = L.map('map').setView([20.5937, 78.9629], 5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map);
+let markersLayer = L.layerGroup().addTo(map);
+
+function planTrip() {
+  const start = document.getElementById("start").value;
+  const destination = document.getElementById("destination").value;
+  const mode = document.getElementById("mode").value;
+
+  if (!start || !destination) {
+    alert("Please select both start and destination cities!");
+    return;
+  }
+
+  const url = {
+    flight: "https://www.makemytrip.com/flights/",
+    train: "https://www.irctc.co.in/nget/train-search",
+    bus: "https://www.redbus.in/",
+    car: "https://www.zoomcar.com/"
+  }[mode];
+
+  window.open(url, "_blank");
+}
+
+async function findNearby() {
+  const city = document.getElementById("locationInput").value.trim();
+  const category = document.getElementById("category").value;
+  if (!city) return alert("Enter a city first!");
+
+  const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city)}`);
+  const geoData = await geoRes.json();
+  if (!geoData.length) return alert("City not found!");
+  const lat = geoData[0].lat, lon = geoData[0].lon;
+  map.setView([lat, lon], 13);
+  markersLayer.clearLayers();
+
+  const tags = {
+    hotel: "tourism=hotel",
+    restaurant: "amenity=restaurant",
+    school: "amenity=school",
+    hospital: "amenity=hospital",
+    park: "leisure=park",
+    atm: "amenity=atm",
+    bank: "amenity=bank"
+  };
+  const tag = tags[category];
+  const overpassUrl = `https://overpass-api.de/api/interpreter?data=[out:json];node[${tag}](around:5000,${lat},${lon});out;`;
+  const res = await fetch(overpassUrl);
+  const data = await res.json();
+
+  if (!data.elements.length) return alert("No nearby places found!");
+  data.elements.forEach(el => {
+    if (el.lat && el.lon) {
+      L.marker([el.lat, el.lon])
+        .bindPopup(`<b>${el.tags.name || "Unnamed"}</b><br>Category: ${category}`)
+        .addTo(markersLayer);
+    }
+  });
+}
+</script>
+
+</body>
+</html>
+# travelhtml
